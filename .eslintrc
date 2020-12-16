@@ -2,7 +2,14 @@
   "extends": [
     "airbnb"
   ],
+  "env": {
+    "jest": true
+  },
+  "globals": {
+    "document": true
+  },
   "rules": {
+    "import/prefer-default-export": "off",
     "react/jsx-filename-extension": [
       1,
       {
@@ -10,6 +17,29 @@
           ".js"
         ]
       }
+    ],
+    "react/jsx-props-no-spreading": [
+      "off"
     ]
-  }
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": [
+          "./src"
+        ],
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    }
+  },
+  "ignorePatterns": [
+    "src/stories/*",
+    ".storybook/*"
+  ]
 }
