@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-const ButtonIco = styled.button`
+const ButtonIcon = styled.button`
+  display: block;
   width: 67px;
   height: 67px;
   border-radius: 20px;
@@ -10,5 +11,10 @@ const ButtonIco = styled.button`
   background-size: 40%;
   border: none;
   background-color: ${({ active }) => (active ? 'white' : 'transparent')};
+  
+  &.active{
+  background-color: white;
+  }
+  
 `;
-export default ButtonIco;
+export default ButtonIcon;

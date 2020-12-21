@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
 import Button from 'components/atoms/Button/Button';
 import LinkIcon from 'assets/link.svg';
+import { connect } from 'react-redux';
+import { removeItem as removeItemAction } from 'actions';
 
 const StyledWrapper = styled.div`
   min-height: 380px;
@@ -46,7 +49,7 @@ const SyledAvatar = styled.img`
   top: 25px;
   height: 86px;
   width: 86px;
-  border:5px solid ${({ theme }) => theme.twitter}; 
+  border:5px solid ${({ theme }) => theme.twitters}; 
   border-radius: 50%;
 `;
 
@@ -64,32 +67,65 @@ const StyledLinkButton = styled.a`
   transform: translateY(-15%);
 `;
 
-// eslint-disable-next-line react/prop-types
-const Card = ({ cardType }) => (
-  <StyledWrapper>
-    <InnerWrapper cardType={cardType}>
-      <StyledHeading>Hello Roman</StyledHeading>
-      <DateInfo>3 days</DateInfo>
-      {cardType === 'twitter' && <SyledAvatar src="https://unavatar.now.sh/twitter/hello_roman" />}
-      {cardType === 'article' && <StyledLinkButton />}
-    </InnerWrapper>
-    <InnerWrapper flex>
-      <Paragraph>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus, dignissimos
-        dolore labore odio quasi sapiente. Ad cum debitis eaque error ipsa, modi molestias, nihil,
-        pariatur quae quidem rem sapiente tempora?
-      </Paragraph>
-      <Button secondary>Remove</Button>
-    </InnerWrapper>
-  </StyledWrapper>
-);
+class Card extends Component {
+  // eslint-disable-next-line react/state-in-constructor
+  state = {
+    redirect: false,
+  };
+
+  handleCardClick = () => this.setState({ redirect: true });
+
+  render() {
+    const { redirect } = this.state;
+
+    const {
+      // eslint-disable-next-line no-shadow,react/prop-types
+      id, cardType, title, created, twitterName, articleUrl, content, removeItem,
+    } = this.props;
+
+    if (redirect) {
+      return <Redirect to={`${cardType}/${id}`} />;
+    }
+
+    return (
+      <StyledWrapper onClick={this.handleCardClick}>
+        <InnerWrapper cardType={cardType}>
+          <StyledHeading>{title}</StyledHeading>
+          <DateInfo>{created}</DateInfo>
+          {cardType === 'twitters'
+          && <SyledAvatar src={`https://avatar.oxro.io/avatar.svg?name=${twitterName}`} />}
+          {cardType === 'articles' && <StyledLinkButton src={articleUrl} />}
+        </InnerWrapper>
+        <InnerWrapper flex>
+
+          <Paragraph>
+            {content}
+          </Paragraph>
+          <Button onClick={() => removeItem(cardType, id)} secondary>REMOVE</Button>
+        </InnerWrapper>
+      </StyledWrapper>
+    );
+  }
+}
 
 Card.propTypes = {
-  cardType: PropTypes.oneOf(['note', 'twitter', 'article']),
+  cardType: PropTypes.oneOf(['notes', 'twitters', 'articles']),
+  id: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  created: PropTypes.string.isRequired,
+  twitterName: PropTypes.string,
+  articleUrl: PropTypes.string,
+  content: PropTypes.string.isRequired,
+  removeItem: PropTypes.func.isRequired,
 };
 
 Card.defaultProps = {
-  cardType: 'note',
-};
+  cardType: 'notes',
+  twitterName: null,
+  articleUrl: null,
 
-export default Card;
+};
+const mapDispatchToProps = (dispatch) => ({
+  removeItem: (itemType, id) => dispatch(removeItemAction(itemType, id)),
+});
+export default connect(null, mapDispatchToProps)(Card);
