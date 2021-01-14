@@ -1,3 +1,8 @@
+import {
+  // eslint-disable-next-line no-unused-vars
+  ADD_ITEM, REMOVE_ITEM, AUTH_FAILURE, AUTH_REQUEST, AUTH_SUCCESS,
+} from '../actions';
+
 const initialState = {
   notes: [
     {
@@ -101,12 +106,19 @@ const initialState = {
 // eslint-disable-next-line no-unused-vars
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'ADD_ITEM':
+    case AUTH_SUCCESS:
+      return {
+        ...state,
+        // eslint-disable-next-line no-underscore-dangle
+        userID: action.payload.data._id,
+
+      };
+    case ADD_ITEM:
       return {
         ...state,
         [action.payload.itemType]: [...state[action.payload.itemType], action.payload.item],
       };
-    case 'REMOVE_ITEM':
+    case REMOVE_ITEM:
       return {
         ...state,
         [action.payload.itemType]: [

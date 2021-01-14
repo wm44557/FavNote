@@ -1,7 +1,14 @@
 import axios from 'axios';
 
+export const REMOVE_ITEM = 'REMOVE_ITEM';
+export const ADD_ITEM = 'ADD_ITEM';
+export const AUTH_REQUEST = 'AUTH_REQUEST';
+export const AUTH_SUCCESS = 'AUTH_SUCCESS';
+export const AUTH_FAILURE = 'AUTH_FAILURE';
+
 export const authenticateAction = (username, password) => (dispatch) => {
-  dispatch({ type: 'AUTHENTICATE_REQUEST' });
+  dispatch({ type: AUTH_REQUEST });
+
   return axios
     .post('http://localhost:9000/api/user/login', {
       username,
@@ -9,41 +16,32 @@ export const authenticateAction = (username, password) => (dispatch) => {
     })
     .then((payload) => {
       console.log(payload);
-      console.log('XD');
-
       dispatch({
-        type: 'AUTHENTICATE_SUCCESS',
+        type: AUTH_SUCCESS,
         payload,
       });
     })
-    .catch(
-      (err) => {
-        console.log(err);
-        dispatch({ type: 'AUTHENTICATE_FAILURE' });
-      },
-    );
+    .catch((err) => {
+      console.log(err);
+      dispatch({ type: AUTH_FAILURE });
+    });
 };
+
 export const removeItem = (itemType, id) => ({
-  type: 'REMOVE_ITEM',
+  type: REMOVE_ITEM,
   payload: {
     itemType,
     id,
   },
 });
 
-export const addItem = (itemType, itemContent) => {
-  const getId = () => `_${Math.random()
-    .toString(36)
-    .substr(2, 9)}`;
-
-  return {
-    type: 'ADD_ITEM',
-    payload: {
-      itemType,
-      item: {
-        id: getId(),
-        ...itemContent,
-      },
+export const addItem = (itemType, itemContent) => ({
+  type: ADD_ITEM,
+  payload: {
+    itemType,
+    item: {
+      id: '',
+      ...itemContent,
     },
-  };
-};
+  },
+});
